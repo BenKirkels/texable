@@ -5,9 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "texable"
 version = "0.0.1"
-authors = [
-  { name="Ben Kirkels" }
-]
+authors = [{ name = "Ben Kirkels" }]
 description = "Easily generate LaTeX tables from Python"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -15,3 +13,6 @@ license = { file = "LICENSE" }
 [project.urls]
 Homepage = "https://github.com/BenKirkels/texable"
 Issues = "https://github.com/BenKirkels/texable/issues"
+
+[tool.hatch.build]
+source = "src"
