@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Sequence
 
 
 class Alignments:
@@ -11,42 +11,52 @@ class Alignments:
         ] * num_columns  # Default to center alignment for all columns
 
     def __setitem__(
-        self, index: Union[int, slice], value: Union[str, list[str]]
+        self, index: Union[int, slice], value: Union[str, Sequence[str]]
     ) -> None:
         """Set the alignment for one or more columns.
 
         Args:
-            index (Union[int, slice]): The index or slice of columns to set.
-            value (Union[str, list[str]]): The alignment value(s) to set.
-            Must be one of 'l', 'c', or 'r' for left, center, or right alignment.
+            index : The index or slice of columns to set.
+            value : The alignment value(s) to set.
+                Must be one of 'l', 'c', or 'r' for left, center, or right alignment.
         Raises:
             TypeError: If the index is not an integer or slice, or if the value is not a string or list of strings.
             ValueError: If the alignment value is not one of 'l', 'c', or 'r', or if the length of the value list does not match the number of indices.
             IndexError: If the index is out of range.
         """
-        if isinstance(index, slice):
-            indexes = range(
-                index.start or 0, index.stop or len(self._alignments), index.step or 1
-            )
+        VALID_ALIGNMENTS = {"l", "c", "r"}
 
-            if isinstance(value, list):
+        def validate_alignment(val: str) -> None:
+            if val not in VALID_ALIGNMENTS:
+                raise ValueError("Alignment must be one of 'l', 'c', or 'r'.")
+
+        if isinstance(index, int):
+            if not isinstance(value, str):
+                raise TypeError("Alignment must be a string.")
+            if index < 0 or index >= len(self._alignments):
+                raise IndexError("Index out of range.")
+            validate_alignment(value)
+            self._alignments[index] = value
+
+        elif isinstance(index, slice):
+            indexes = list(range(*index.indices(len(self._alignments))))
+
+            if isinstance(value, str):
+                value = [value] * len(indexes)
+
+            if isinstance(value, Sequence):
                 if len(value) != len(indexes):
                     raise ValueError(
                         "Length of value list must match the number of indices."
                     )
                 for i, val in zip(indexes, value):
-                    self.__setitem__(i, val)
-            elif isinstance(value, str):
-                for i in indexes:
-                    self.__setitem__(i, value)
-        elif isinstance(index, int):
-            if not isinstance(value, str):
-                raise TypeError("Alignment must be a string.")
-            if value not in ("l", "c", "r"):
-                raise ValueError("Alignment must be one of 'l', 'c', or 'r'.")
-            if index < 0 or index >= len(self._alignments):
-                raise IndexError("Index out of range")
-            self._alignments[index] = value
+                    if not isinstance(val, str):
+                        raise TypeError("Each alignment must be a string.")
+                    validate_alignment(val)
+                    self._alignments[i] = val
+            else:
+                raise TypeError("Value must be a string or a sequence of strings.")
+
         else:
             raise TypeError("Index must be an integer or a slice.")
 

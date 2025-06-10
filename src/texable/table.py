@@ -69,6 +69,13 @@ class Table:
         self._validate_string(indent, "indent")
         self.indent = indent
         return self
+    @property
+    def alignments(self) -> Alignments:
+        return self._alignments
+
+    @alignments.setter
+    def alignments(self, alignments: Union[str, Sequence[str]]) -> None:
+        self._alignments[:] = alignments
 
     def __str__(self) -> str:
         tabular_content = self._build_tabular_content()
@@ -93,9 +100,6 @@ class Table:
     def num_columns(self) -> int:
         return len(self.alignments)
 
-    @property
-    def alignments(self) -> Alignments:
-        return self._alignments
 
     # ========== Internal Utilities ==========
     def _validate_iterable(self, value: Any, name: str) -> None:
