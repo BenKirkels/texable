@@ -35,7 +35,7 @@ class Headers:
             if isinstance(value, Sequence):
                 if len(value) != len(indexes):
                     raise ValueError(
-                        f"Length of value list must match the number of indices."
+                        "Number of headers must match the number of indices."
                     )
                 for i, val in zip(indexes, value):
                     if not isinstance(val, str):
@@ -45,7 +45,7 @@ class Headers:
                     self._headers[i] = str(val)
             else:
                 raise TypeError(
-                    f"Value must be a string or a sequence of strings, got {type(value).__name__}."
+                    f"Header must be a string or a sequence of strings, got {type(value).__name__}."
                 )
 
         else:

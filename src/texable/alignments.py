@@ -50,7 +50,7 @@ class Alignments:
             if isinstance(value, Sequence):
                 if len(value) != len(indexes):
                     raise ValueError(
-                        "Length of value list must match the number of indices."
+                        "Number of alignments must match the number of indices."
                     )
                 for i, val in zip(indexes, value):
                     if not isinstance(val, str):
