@@ -111,7 +111,7 @@ class Table:
         return f"\\label{{{self.label}}}\n" if self.label else ""
 
     def _build_tabular_content(self) -> str:
-        all_rows = [self._headers] + self._rows if self._headers else self._rows
+        all_rows = [self._headers.headers] + self._rows if self._headers else self._rows
         return "".join(self._format_row(row) for row in all_rows)
 
     def _latex_block(
