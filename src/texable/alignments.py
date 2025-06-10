@@ -11,7 +11,7 @@ class Alignments:
         ] * num_columns  # Default to center alignment for all columns
 
     def __setitem__(
-        self, index: Union[int, slice], value: Union[str, Sequence[str]]
+        self, index: Union[int, slice, tuple], value: Union[str, Sequence[str]]
     ) -> None:
         """Set the alignment for one or more columns.
 
@@ -38,8 +38,11 @@ class Alignments:
             validate_alignment(value)
             self._alignments[index] = value
 
-        elif isinstance(index, slice):
-            indexes = list(range(*index.indices(len(self._alignments))))
+        elif isinstance(index, (slice, tuple)):
+            if isinstance(index, tuple):
+                indexes = list(index)
+            elif isinstance(index, slice):
+                indexes = list(range(*index.indices(len(self._alignments))))
 
             if isinstance(value, str):
                 value = [value] * len(indexes)

@@ -14,7 +14,7 @@ class Headers:
         return self._headers[index]
 
     def __setitem__(
-        self, index: Union[int, slice], value: Union[str, Sequence[str]]
+        self, index: Union[int, slice, tuple], value: Union[str, Sequence[str]]
     ) -> None:
         if isinstance(index, int):
             if not isinstance(value, str):
@@ -23,8 +23,11 @@ class Headers:
                 raise IndexError("Index out of range")
             self._headers[index] = str(value)
 
-        elif isinstance(index, slice):
-            indexes = list(range(*index.indices(len(self._headers))))
+        elif isinstance(index, (slice, tuple)):
+            if isinstance(index, tuple):
+                indexes = list(index)
+            elif isinstance(index, slice):
+                indexes = list(range(*index.indices(len(self._headers))))
 
             if isinstance(value, str):
                 value = [value] * len(indexes)
