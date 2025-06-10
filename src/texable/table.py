@@ -1,24 +1,29 @@
 from typing import Optional, Self, Iterable, Any
 import logging
 
+from texable.alignments import Alignments
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class Table:
-    def __init__(self):
+    def __init__(self, num_columns: int):
         self.header: list[Any] = []
         self.rows: list[list[Any]] = []
         self.caption: Optional[str] = None
         self.label: Optional[str] = None
         self.indent: str = "  "  # Default indentation for LaTeX blocks
+        self._alignments = Alignments(num_columns)
 
     def set_header(self, header: Iterable[Any]) -> Self:
         self._validate_iterable(header, "header")
         header = list(header)
 
-        if self.rows and len(header) != len(self.rows[0]):
-            raise ValueError("Header length must match number of columns in rows")
+        if len(header) != self.num_columns:
+            raise ValueError(
+                f"Header length must match the number of columns ({self.num_columns})."
+            )
 
         if self.header:
             logger.warning("Overwriting existing header.")
@@ -31,8 +36,10 @@ class Table:
             self._validate_iterable(row, "row")
             row = list(row)
 
-            if self.header and len(row) != len(self.header):
-                raise ValueError("Row length must match the header length.")
+            if len(row) != self.num_columns:
+                raise ValueError(
+                    f"Row length must match the number of columns ({self.num_columns})."
+                )
             if not self.header and len(row) != len(self.rows[0]) if self.rows else 0:
                 raise ValueError("Row length must match the number of columns.")
 
@@ -70,7 +77,7 @@ class Table:
             tabular_content,
             required_arg=[self._column_format()],
         )
-        return "\n" + self._latex_block(
+        return self._latex_block(
             "table",
             tabular_block + self._caption() + self._label(),
         )
@@ -81,6 +88,14 @@ class Table:
 
     def __repr__(self) -> str:
         return f"Table(header={self.header}, rows={self.rows})"
+
+    @property
+    def num_columns(self) -> int:
+        return len(self.alignments)
+
+    @property
+    def alignments(self) -> Alignments:
+        return self._alignments
 
     # ========== Internal Utilities ==========
     def _validate_iterable(self, value: Any, name: str) -> None:
@@ -99,8 +114,7 @@ class Table:
         return " & ".join(str(cell) for cell in row) + r" \\" + "\n"
 
     def _column_format(self) -> str:
-        count = len(self.header) if self.header else len(self.rows[0])
-        return "|" + "|".join(["c"] * count) + "|"
+        return str(self.alignments)
 
     def _caption(self) -> str:
         return f"\\caption{{{self.caption}}}\n" if self.caption else ""
