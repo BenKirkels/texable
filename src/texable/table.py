@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 class Table:
     def __init__(self, num_columns: int):
+        self._num_columns = num_columns
         self._rows: list[list[Any]] = []
 
-        self._headers = Headers(num_columns)
+        self._headers: Optional[Headers] = None
         self._alignments = Alignments(num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
@@ -31,11 +32,14 @@ class Table:
             self._rows.append(row)
 
     @property
-    def headers(self) -> Headers:
+    def headers(self) -> Optional[Headers]:
         return self._headers
 
     @headers.setter
     def headers(self, headers: Sequence[str]) -> None:
+        if self._headers is None:
+            self._headers = Headers(len(headers))
+
         self._headers[:] = headers
 
     @property
@@ -68,7 +72,7 @@ class Table:
 
     @property
     def num_columns(self) -> int:
-        return len(self.alignments)
+        return self._num_columns
 
     @property
     def alignments(self) -> Alignments:
