@@ -91,7 +91,7 @@ class Table:
             name="tabular",
             content=tabular_content,
             indent=self._indent,
-            required_arg=[self._column_alignments()],
+            required_arg=[str(self._alignments)],
         )
 
         caption = make_caption(self._caption) if self._caption else ""
@@ -109,8 +109,3 @@ class Table:
 
     def __repr__(self) -> str:
         return f"Table(header={self._headers}, rows={self._rows})"
-
-    # ========== Internal Utilities ==========
-
-    def _column_alignments(self) -> str:
-        return " ".join(self._alignments.alignments)

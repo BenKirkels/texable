@@ -17,7 +17,7 @@ def test_example1():
 
     expected_output = (
         "\\begin{table}\n"
-        "  \\begin{tabular}{l c r}\n"
+        "  \\begin{tabular}{lcr}\n"
         "    Column 1 & Column 2 & Column 3 \\\\\n"
         "    1 & 2 & 0 \\\\\n"
         "    3 & 4 & 0 \\\\\n"

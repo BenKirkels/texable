@@ -81,3 +81,6 @@ class Alignments:
 
     def __iter__(self):
         return iter(self._alignments)
+
+    def __str__(self) -> str:
+        return "".join(self._alignments)
