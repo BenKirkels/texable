@@ -13,7 +13,7 @@ class Table:
         self._num_columns = num_columns
         self._rows: list[list[Any]] = []
 
-        self._headers: Optional[Headers] = None
+        self._headers = Headers(num_columns)
         self._alignments = Alignments(num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
@@ -32,14 +32,11 @@ class Table:
             self._rows.append(row)
 
     @property
-    def headers(self) -> Optional[Headers]:
+    def headers(self) -> Headers:
         return self._headers
 
     @headers.setter
     def headers(self, headers: Sequence[str]) -> None:
-        if self._headers is None:
-            self._headers = Headers(len(headers))
-
         self._headers[:] = headers
 
     @property
@@ -115,7 +112,9 @@ class Table:
         return f"\\label{{{self.label}}}\n" if self.label else ""
 
     def _build_tabular_content(self) -> str:
-        all_rows = [self._headers.headers] + self._rows if self._headers else self._rows
+        all_rows = (
+            [self.headers.headers] + self._rows if self.headers.are_set else self._rows
+        )
         return "".join(self._format_row(row) for row in all_rows)
 
     def _latex_block(
