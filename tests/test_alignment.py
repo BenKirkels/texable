@@ -1,4 +1,4 @@
-from texable.table import Table
+from texable import Table
 
 
 def test_default_alignment():
