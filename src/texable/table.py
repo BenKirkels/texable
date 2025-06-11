@@ -99,7 +99,7 @@ class Table:
         return f"Table(header={self._headers}, rows={self._rows})"
 
     # ========== Internal Utilities ==========
-    def _format_row(self, row: Sequence[Any]) -> str:
+    def _make_row(self, row: Sequence[Any]) -> str:
         return " & ".join(str(cell) for cell in row) + r" \\" + "\n"
 
     def _column_format(self) -> str:
@@ -115,7 +115,7 @@ class Table:
         all_rows = (
             [self.headers.headers] + self._rows if self.headers.are_set else self._rows
         )
-        return "".join(self._format_row(row) for row in all_rows)
+        return "".join(self._make_row(row) for row in all_rows)
 
     def _latex_block(
         self,
