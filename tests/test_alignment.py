@@ -89,3 +89,13 @@ def test_index_out_of_range():
         pass
     else:
         assert False, "Expected IndexError not raised."
+
+
+def test_support_tuple_value():
+    """Test setting alignments using a tuple."""
+    table = Table(3)
+    table.alignments[0, 2] = ("l", "r")
+
+    assert table.alignments[0] == "l"
+    assert table.alignments[1] == "c"
+    assert table.alignments[2] == "r"

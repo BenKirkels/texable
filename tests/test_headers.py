@@ -83,3 +83,14 @@ def test_set_headers_with_invalid_index():
         pass
     else:
         assert False, "Expected IndexError when setting header with out-of-range index"
+
+
+def test_support_tuple_value():
+    """Test setting headers using a tuple."""
+    table = Table(3)
+    table.headers[0, 1] = ("Header 1", "Header 2")
+
+    assert table.headers[0] == "Header 1"
+    assert table.headers[1] == "Header 2"
+    assert table.headers[2] == ""  # Last header should remain empty
+    assert table.headers.are_set is True
