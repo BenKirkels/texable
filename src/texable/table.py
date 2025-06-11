@@ -3,6 +3,12 @@ import logging
 
 from texable.alignments import Alignments
 from texable.headers import Headers
+from texable.latex_builders import (
+    make_caption,
+    make_label,
+    make_block,
+    make_tabular_content,
+)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -80,15 +86,21 @@ class Table:
         self._alignments[:] = alignments
 
     def __str__(self) -> str:
-        tabular_content = self._build_tabular_content()
-        tabular_block = self._latex_block(
-            "tabular",
-            tabular_content,
-            required_arg=[self._column_format()],
+        tabular_content = make_tabular_content(self._headers, self._rows)
+        tabular_block = make_block(
+            name="tabular",
+            content=tabular_content,
+            indent=self._indent,
+            required_arg=[self._column_alignments()],
         )
-        return self._latex_block(
-            "table",
-            tabular_block + self._make_caption() + self._make_label(),
+
+        caption = make_caption(self._caption) if self._caption else ""
+        label = make_label(self._label) if self._label else ""
+
+        return make_block(
+            name="table",
+            content=tabular_block + caption + label,
+            indent=self._indent,
         )
 
     def write_to_file(self, file_path: str) -> None:
@@ -99,34 +111,6 @@ class Table:
         return f"Table(header={self._headers}, rows={self._rows})"
 
     # ========== Internal Utilities ==========
-    def _make_row(self, row: Sequence[Any]) -> str:
-        return " & ".join(str(cell) for cell in row) + r" \\" + "\n"
 
-    def _column_format(self) -> str:
-        return str(self.alignments)
-
-    def _make_caption(self) -> str:
-        return f"\\caption{{{self.caption}}}\n" if self.caption else ""
-
-    def _make_label(self) -> str:
-        return f"\\label{{{self.label}}}\n" if self.label else ""
-
-    def _build_tabular_content(self) -> str:
-        all_rows = (
-            [self.headers.headers] + self._rows if self.headers.are_set else self._rows
-        )
-        return "".join(self._make_row(row) for row in all_rows)
-
-    def _latex_block(
-        self,
-        name: str,
-        content: str,
-        required_arg: Optional[list[str]] = None,
-        optional_arg: Optional[list[str]] = None,
-    ) -> str:
-        required = f"{{{', '.join(required_arg)}}}" if required_arg else ""
-        optional = f"[{', '.join(optional_arg)}]" if optional_arg else ""
-        indented = "\n".join(
-            self.indent + line if line.strip() else "" for line in content.splitlines()
-        )
-        return f"\\begin{{{name}}}{required}{optional}\n{indented}\n\\end{{{name}}}\n"
+    def _column_alignments(self) -> str:
+        return " ".join(self._alignments.alignments)

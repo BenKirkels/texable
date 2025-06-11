@@ -10,6 +10,11 @@ class Alignments:
             "c"
         ] * num_columns  # Default to center alignment for all columns
 
+    @property
+    def alignments(self) -> list[str]:
+        """Get the list of alignments."""
+        return self._alignments
+
     def __setitem__(
         self, index: Union[int, slice, tuple], value: Union[str, Sequence[str]]
     ) -> None:
@@ -43,7 +48,7 @@ class Alignments:
                 indexes = list(index)
                 if any(not isinstance(i, int) for i in indexes):
                     raise TypeError("All indices must be integers.")
-                
+
             elif isinstance(index, slice):
                 indexes = list(range(*index.indices(len(self._alignments))))
 
@@ -76,6 +81,3 @@ class Alignments:
 
     def __iter__(self):
         return iter(self._alignments)
-
-    def __str__(self) -> str:
-        return " ".join(self._alignments)
