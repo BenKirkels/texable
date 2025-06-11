@@ -41,6 +41,9 @@ class Alignments:
         elif isinstance(index, (slice, tuple)):
             if isinstance(index, tuple):
                 indexes = list(index)
+                if any(not isinstance(i, int) for i in indexes):
+                    raise TypeError("All indices must be integers.")
+                
             elif isinstance(index, slice):
                 indexes = list(range(*index.indices(len(self._alignments))))
 
