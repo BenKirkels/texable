@@ -9,7 +9,7 @@ class Headers:
     @property
     def headers(self) -> list[str]:
         """Get the list of headers."""
-        return self._headers
+        return self._headers.copy()
 
     @property
     def are_set(self) -> bool:

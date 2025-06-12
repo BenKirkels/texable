@@ -13,7 +13,7 @@ class Alignments:
     @property
     def alignments(self) -> list[str]:
         """Get the list of alignments."""
-        return self._alignments
+        return self._alignments.copy()
 
     def __setitem__(
         self, index: Union[int, slice, tuple], value: Union[str, Sequence[str]]
