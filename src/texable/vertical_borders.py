@@ -11,17 +11,17 @@ class VerticalBorders:
         """Get the list of vertical edges."""
         return self._edges.copy()
 
-    def enable_all(self) -> None:
+    def all(self) -> None:
         """Enable all vertical edges."""
         for i in range(len(self._edges)):
             self._edges[i] = True
 
-    def enable_outer(self) -> None:
+    def outer(self) -> None:
         """Enable only the outer vertical edges (first and last)."""
         self._edges[0] = True
         self._edges[-1] = True
 
-    def enable(self, *indexes: int) -> None:
+    def at(self, *indexes: int) -> None:
         """Enable a specific vertical edge or edges."""
         for index in indexes:
             if not isinstance(index, int):
