@@ -10,6 +10,7 @@ from texable.latex_builders import (
     make_block,
     make_tabular_content,
 )
+import texable.custom_types as types
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -25,6 +26,8 @@ class Table:
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
         self._vertical_borders = VerticalBorders(num_columns)
+
+        self._table_alignment: types.alignment = "center"
 
         self._caption: Optional[str] = None
         self._label: Optional[str] = None
@@ -92,7 +95,20 @@ class Table:
     def vertical_borders(self) -> VerticalBorders:
         return self._vertical_borders
 
+    def set_table_alignment(self, alignment: types.alignment) -> None:
+        """Set the alignment of the entire table."""
+        if alignment not in {"center", "left", "right"}:
+            raise ValueError("Alignment must be 'center', 'left', or 'right'.")
+        self._table_alignment = alignment
+
     def __str__(self) -> str:
+        alignment_map = {
+            "center": "\\centering\n",
+            "left": "\\raggedright\n",
+            "right": "\\raggedleft\n",
+        }
+        tabular_alignment = alignment_map.get(self._table_alignment, "")
+
         tabular_content = make_tabular_content(self._headers, self._rows)
         tabular_block = make_block(
             name="tabular",
@@ -106,7 +122,7 @@ class Table:
 
         return make_block(
             name="table",
-            content=tabular_block + caption + label,
+            content=f"{tabular_alignment}{tabular_block}{caption}{label}",
             indent=self._indent,
         )
 
