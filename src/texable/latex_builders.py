@@ -1,6 +1,7 @@
 from typing import Any, Sequence, Optional
 
 from texable.headers import Headers
+from texable.line_borders import LineBorders
 
 
 def make_row(row: Sequence[Any]) -> str:
@@ -15,15 +16,24 @@ def make_label(label: str) -> str:
     return f"\\label{{{label}}}\n"
 
 
-def make_tabular_content(headers: Headers, rows: Sequence[Sequence[str]]) -> str:
-    result = ""
+def make_tabular_content(
+    headers: Headers, rows: Sequence[Sequence[str]], horizontal_borders: LineBorders
+) -> str:
+    latex_rows = []
     if headers.are_set:
-        result += make_row(headers.headers)
+        latex_rows.append(make_row(headers.headers))
 
     for row in rows:
-        result += make_row(row)
+        latex_rows.append(make_row(row))
 
-    return result
+    with_borders = ""
+    for i in range(len(latex_rows)):
+        if horizontal_borders[i]:
+            with_borders += horizontal_borders[i] + "\n"
+        with_borders += latex_rows[i]
+    with_borders += horizontal_borders[-1]
+
+    return with_borders
 
 
 def make_block(

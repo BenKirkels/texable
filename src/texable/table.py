@@ -3,7 +3,7 @@ import logging
 
 from texable.alignments import Alignments
 from texable.headers import Headers
-from texable.vertical_borders import VerticalBorders
+from texable.line_borders import LineBorders
 from texable.latex_builders import (
     make_caption,
     make_label,
@@ -25,20 +25,19 @@ class Table:
         ):
             raise TypeError("Data must be a sequence of sequences (rows).")
 
+        self._data = data
         self._num_columns = len(data[0]) if data else 0
+        self._num_rows = len(data)
         assert all(
             len(row) == self._num_columns for row in data
         ), "All rows must have the same number of columns."
-
-        self._num_rows = len(data)
-
-        self._data = data
 
         self._headers = Headers(self._num_columns)
         self._alignments = Alignments(self._num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
-        self._vertical_borders = VerticalBorders(self._num_columns)
+        self._vertical_borders = LineBorders(self._num_columns + 1, is_horizontal=False)
+        self._horizontal_borders = LineBorders(self._num_rows + 1, is_horizontal=True)
 
         self._table_alignment: types.alignment = "center"
 
@@ -94,8 +93,12 @@ class Table:
         self._alignments[:] = alignments
 
     @property
-    def vertical_borders(self) -> VerticalBorders:
+    def vertical_borders(self) -> LineBorders:
         return self._vertical_borders
+
+    @property
+    def horizontal_borders(self) -> LineBorders:
+        return self._horizontal_borders
 
     def set_table_alignment(self, alignment: types.alignment) -> None:
         """Set the alignment of the entire table."""
@@ -111,7 +114,9 @@ class Table:
         }
         tabular_alignment = alignment_map.get(self._table_alignment, "")
 
-        tabular_content = make_tabular_content(self._headers, self._data)
+        tabular_content = make_tabular_content(
+            self._headers, self._data, self._horizontal_borders
+        )
         tabular_block = make_block(
             name="tabular",
             content=tabular_content,
