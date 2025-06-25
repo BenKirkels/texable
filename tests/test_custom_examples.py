@@ -1,6 +1,5 @@
 from texable import Table
 
-
 def test_example1():
     table = Table(3)
     table.add_rows(
@@ -17,6 +16,7 @@ def test_example1():
 
     expected_output = (
         "\\begin{table}\n"
+        "  \\centering\n"
         "  \\begin{tabular}{lcr}\n"
         "    Column 1 & Column 2 & Column 3 \\\\\n"
         "    1 & 2 & 0 \\\\\n"
