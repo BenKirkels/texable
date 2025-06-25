@@ -17,31 +17,33 @@ logger = logging.getLogger(__name__)
 
 
 class Table:
-    def __init__(self, num_columns: int):
-        self._num_columns = num_columns
-        self._rows: list[list[Any]] = []
+    def __init__(self, data: Sequence[Sequence[Any]]) -> None:
+        """Initialize a Table object."""
 
-        self._headers = Headers(num_columns)
-        self._alignments = Alignments(num_columns)
+        if not isinstance(data, Sequence) or not all(
+            isinstance(row, Sequence) for row in data
+        ):
+            raise TypeError("Data must be a sequence of sequences (rows).")
+
+        self._num_columns = len(data[0]) if data else 0
+        assert all(
+            len(row) == self._num_columns for row in data
+        ), "All rows must have the same number of columns."
+
+        self._num_rows = len(data)
+
+        self._data = data
+
+        self._headers = Headers(self._num_columns)
+        self._alignments = Alignments(self._num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
-        self._vertical_borders = VerticalBorders(num_columns)
+        self._vertical_borders = VerticalBorders(self._num_columns)
 
         self._table_alignment: types.alignment = "center"
 
         self._caption: Optional[str] = None
         self._label: Optional[str] = None
-
-    def add_rows(self, rows: Sequence[Sequence[Any]]) -> None:
-        for row in rows:
-            row = list(row)
-
-            if len(row) != self.num_columns:
-                raise ValueError(
-                    f"Row length must match the number of columns ({self.num_columns})."
-                )
-
-            self._rows.append(row)
 
     @property
     def headers(self) -> Headers:
@@ -109,7 +111,7 @@ class Table:
         }
         tabular_alignment = alignment_map.get(self._table_alignment, "")
 
-        tabular_content = make_tabular_content(self._headers, self._rows)
+        tabular_content = make_tabular_content(self._headers, self._data)
         tabular_block = make_block(
             name="tabular",
             content=tabular_content,
@@ -131,7 +133,7 @@ class Table:
             file.write(str(self))
 
     def __repr__(self) -> str:
-        return f"Table(header={self._headers}, rows={self._rows})"
+        return f"Table(header={self._headers}, rows={self._data})"
 
     def _column_arg(self) -> str:
         """Generate the column argument for the tabular environment."""

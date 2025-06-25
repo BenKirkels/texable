@@ -1,14 +1,15 @@
 from texable import Table
 
+
 def test_example1():
-    table = Table(3)
-    table.add_rows(
+    table = Table(
         [
             [1, 2, 0],
             [3, 4, 0],
             [5, 6, 0],
         ]
     )
+
     table.headers = ("Column 1", "Column 2", "Column 3")
     table.caption = "This is a sample table caption."
     table.label = "tab:sample_table"

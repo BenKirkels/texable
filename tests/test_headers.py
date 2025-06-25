@@ -3,7 +3,11 @@ from texable import Table
 
 def test_default_no_headers():
     """Test that a table without headers has no headers set."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
 
     assert not any(table.headers)
     assert table.headers.are_set is False
@@ -11,7 +15,11 @@ def test_default_no_headers():
 
 def test_set_headers():
     """Test setting headers for a table."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     headers = ["Header 1", "Header 2", "Header 3"]
     table.headers = headers
 
@@ -21,7 +29,11 @@ def test_set_headers():
 
 def test_set_single_header():
     """Test setting a single header."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     table.headers[0] = "Header 1"
 
     assert table.headers[0] == "Header 1"
@@ -32,7 +44,11 @@ def test_set_single_header():
 
 def test_set_multiple_headers():
     """Test setting multiple headers at once."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     table.headers[0:2] = ["Header 1", "Header 2"]
 
     assert table.headers[0] == "Header 1"
@@ -43,7 +59,11 @@ def test_set_multiple_headers():
 
 def test_set_combined_headers():
     """Test setting a combination of individual and multiple headers."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     table.headers[0, 2] = ["Header 1", "Header 3"]
 
     assert table.headers[0] == "Header 1"
@@ -54,7 +74,11 @@ def test_set_combined_headers():
 
 def test_set_headers_with_invalid_type():
     """Test setting headers with an invalid type."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     try:
         table.headers[0] = 123  # type: ignore # Invalid type
     except TypeError:
@@ -65,7 +89,11 @@ def test_set_headers_with_invalid_type():
 
 def test_set_headers_with_invalid_length():
     """Test setting headers with an invalid length."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     try:
         table.headers[0:2] = ["Header 1"]  # Only one header provided
     except ValueError:
@@ -76,7 +104,11 @@ def test_set_headers_with_invalid_length():
 
 def test_set_headers_with_invalid_index():
     """Test setting headers with an index out of range."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     try:
         table.headers[3] = "Header 4"  # Index out of range
     except IndexError:
@@ -87,7 +119,11 @@ def test_set_headers_with_invalid_index():
 
 def test_support_tuple_value():
     """Test setting headers using a tuple."""
-    table = Table(3)
+    table = Table(
+        [
+            [1, 2, 0],
+        ]
+    )
     table.headers[0, 1] = ("Header 1", "Header 2")
 
     assert table.headers[0] == "Header 1"

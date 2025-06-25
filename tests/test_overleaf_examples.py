@@ -3,8 +3,7 @@ from texable.table import Table
 
 
 def test_example1():
-    table = Table(3)
-    table.add_rows(
+    table = Table(
         [
             ["cell 1", "cell 2", "cell 3"],
             ["cell 4", "cell 5", "cell 6"],

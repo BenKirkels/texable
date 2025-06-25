@@ -15,9 +15,15 @@ def make_label(label: str) -> str:
     return f"\\label{{{label}}}\n"
 
 
-def make_tabular_content(headers: Headers, rows: list[list[str]]) -> str:
-    all_rows = [headers.headers] + rows if headers.are_set else rows
-    return "".join(make_row(row) for row in all_rows)
+def make_tabular_content(headers: Headers, rows: Sequence[Sequence[str]]) -> str:
+    result = ""
+    if headers.are_set:
+        result += make_row(headers.headers)
+
+    for row in rows:
+        result += make_row(row)
+
+    return result
 
 
 def make_block(
