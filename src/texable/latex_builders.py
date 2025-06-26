@@ -2,6 +2,7 @@ from typing import Any, Sequence, Optional
 
 from texable.headers import Headers
 from texable.line_borders import LineBorders
+from texable.column_alignments import ColumnAlignments
 
 
 def make_row(row: Sequence[Any]) -> str:
@@ -49,3 +50,15 @@ def make_block(
         indent + line if line.strip() else "" for line in content.splitlines()
     )
     return f"\\begin{{{name}}}{required}{optional}\n{indented}\n\\end{{{name}}}\n"
+
+
+def make_column_arg(
+    vertical_borders: LineBorders, column_alignments: ColumnAlignments
+) -> str:
+    """Generate the column argument for the tabular environment."""
+    result = ""
+    for i in range(len(column_alignments)):
+        result += vertical_borders[i]
+        result += column_alignments[i]
+    result += vertical_borders[-1]
+    return result

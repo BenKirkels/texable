@@ -9,6 +9,7 @@ from texable.latex_builders import (
     make_label,
     make_block,
     make_tabular_content,
+    make_column_arg,
 )
 import texable.custom_types as types
 
@@ -121,7 +122,9 @@ class Table:
             name="tabular",
             content=tabular_content,
             indent=self._indent,
-            required_arg=[self._column_arg()],
+            required_arg=[
+                make_column_arg(self._vertical_borders, self._column_alignments)
+            ],
         )
 
         caption = make_caption(self._caption) if self._caption else ""
@@ -139,12 +142,3 @@ class Table:
 
     def __repr__(self) -> str:
         return f"Table(header={self._headers}, rows={self._data})"
-
-    def _column_arg(self) -> str:
-        """Generate the column argument for the tabular environment."""
-        result = ""
-        for i in range(self._num_columns):
-            result += self._vertical_borders[i]
-            result += self._column_alignments[i]
-        result += self._vertical_borders[self._num_columns]
-        return result
