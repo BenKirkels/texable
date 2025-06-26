@@ -1,4 +1,5 @@
 from texable import Table
+from texable.custom_types import Alignment
 
 
 def test_example1():
@@ -13,8 +14,8 @@ def test_example1():
     table.headers = ("Column 1", "Column 2", "Column 3")
     table.caption = "This is a sample table caption."
     table.label = "tab:sample_table"
-    table.column_alignments[0, 2] = ["l", "r"]
-    table.set_table_alignment("left")
+    table.column_alignments[0, 2] = [Alignment.LEFT, Alignment.RIGHT]
+    table.table_alignment = Alignment.RIGHT
 
     expected_output = (
         "\\begin{table}\n"

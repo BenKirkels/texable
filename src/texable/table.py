@@ -11,7 +11,7 @@ from texable.latex_builders import (
     make_tabular_content,
     make_column_arg,
 )
-import texable.custom_types as types
+from texable.custom_types import Alignment
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -40,8 +40,7 @@ class Table:
         self._vertical_borders = LineBorders(self._num_columns + 1, is_horizontal=False)
         self._horizontal_borders = LineBorders(self._num_rows + 1, is_horizontal=True)
 
-        self._table_alignment: types.alignment = "center"
-
+        self._table_alignment: Alignment = Alignment.CENTER
         self._caption: Optional[str] = None
         self._label: Optional[str] = None
 
@@ -51,6 +50,13 @@ class Table:
 
     @headers.setter
     def headers(self, headers: Sequence[str]) -> None:
+        if not isinstance(headers, Sequence):
+            raise TypeError("Headers must be a sequence of strings.")
+        if len(headers) != self._num_columns:
+            raise ValueError(
+                f"Number of headers ({len(headers)}) must match number of columns ({self._num_columns})."
+            )
+
         self._headers[:] = headers
 
     @property
@@ -90,7 +96,7 @@ class Table:
         return self._column_alignments
 
     @column_alignments.setter
-    def column_alignments(self, alignments: Union[str, Sequence[str]]) -> None:
+    def column_alignments(self, alignments: Union[Alignment, Sequence[Alignment]]) -> None:
         self._column_alignments[:] = alignments
 
     @property
@@ -101,19 +107,18 @@ class Table:
     def horizontal_borders(self) -> LineBorders:
         return self._horizontal_borders
 
-    def set_table_alignment(self, alignment: types.alignment) -> None:
+    @property
+    def table_alignment(self) -> Alignment:
+        """Get the alignment of the entire table."""
+        return self._table_alignment
+
+    @table_alignment.setter
+    def table_alignment(self, alignment: Alignment) -> None:
         """Set the alignment of the entire table."""
-        if alignment not in {"center", "left", "right"}:
-            raise ValueError("Alignment must be 'center', 'left', or 'right'.")
         self._table_alignment = alignment
 
     def __str__(self) -> str:
-        alignment_map = {
-            "center": "\\centering\n",
-            "left": "\\raggedright\n",
-            "right": "\\raggedleft\n",
-        }
-        tabular_alignment = alignment_map.get(self._table_alignment, "")
+        tabular_alignment = self._table_alignment.table() + "\n"
 
         tabular_content = make_tabular_content(
             self._headers, self._data, self._horizontal_borders

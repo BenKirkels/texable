@@ -1,4 +1,5 @@
 from texable import Table
+from texable.custom_types import Alignment
 
 
 def test_default_alignment():
@@ -22,7 +23,7 @@ def test_individual_alignment():
             [1, 2, 0],
         ]
     )
-    table.column_alignments[0] = "l"
+    table.column_alignments[0] = Alignment.LEFT
 
     assert table.column_alignments[0] == "l"
     assert table.column_alignments[1] == "c"
@@ -36,7 +37,7 @@ def test_slice_alignment():
             [1, 2, 0],
         ]
     )
-    table.column_alignments[1:3] = ["r", "l"]
+    table.column_alignments[1:3] = [Alignment.RIGHT, Alignment.LEFT]
 
     assert table.column_alignments[0] == "c"
     assert table.column_alignments[1] == "r"
@@ -50,7 +51,7 @@ def test_combined_alignment():
             [1, 2, 0],
         ]
     )
-    table.column_alignments[0, 2] = "l"
+    table.column_alignments[0, 2] = Alignment.LEFT
 
     assert table.column_alignments[0] == "l"
     assert table.column_alignments[1] == "c"
@@ -64,7 +65,7 @@ def test_full_alignment():
             [1, 2, 0],
         ]
     )
-    table.column_alignments = ["l", "c", "r"]
+    table.column_alignments = [Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT]
 
     assert table.column_alignments[0] == "l"
     assert table.column_alignments[1] == "c"
@@ -94,8 +95,8 @@ def test_invalid_alignment_value():
         ]
     )
     try:
-        table.column_alignments[0] = "x"  # Invalid alignment
-    except ValueError:
+        table.column_alignments[0] = "c"  # type: ignore # Invalid value
+    except TypeError:
         pass
     else:
         assert False, "Expected ValueError not raised."
@@ -116,7 +117,7 @@ def test_index_out_of_range():
         assert False, "Expected IndexError not raised."
 
     try:
-        table.column_alignments[5] = "l"  # Out of range
+        table.column_alignments[5] = Alignment.LEFT  # Out of range
     except IndexError:
         pass
     else:
@@ -130,7 +131,7 @@ def test_support_tuple_value():
             [1, 2, 0],
         ]
     )
-    table.column_alignments[0, 2] = ("l", "r")
+    table.column_alignments[0, 2] = (Alignment.LEFT, Alignment.RIGHT)
 
     assert table.column_alignments[0] == "l"
     assert table.column_alignments[1] == "c"

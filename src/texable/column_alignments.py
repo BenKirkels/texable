@@ -1,22 +1,26 @@
 from typing import Union, Sequence
 
+from texable.custom_types import Alignment
+
 
 class ColumnAlignments:
     def __init__(self, num_columns: int) -> None:
         if not isinstance(num_columns, int) or num_columns <= 0:
             raise ValueError("Number of columns must be a positive integer.")
 
-        self._alignments: list[str] = [
-            "c"
+        self._alignments: list[Alignment] = [
+            Alignment.CENTER  # Default alignment is center
         ] * num_columns  # Default to center alignment for all columns
 
     @property
     def alignments(self) -> list[str]:
         """Get the list of alignments."""
-        return self._alignments.copy()
+        return [a.column() for a in self._alignments]
 
     def __setitem__(
-        self, index: Union[int, slice, tuple], value: Union[str, Sequence[str]]
+        self,
+        index: Union[int, slice, tuple],
+        value: Union[Alignment, Sequence[Alignment]],
     ) -> None:
         """Set the alignment for one or more columns.
 
@@ -29,18 +33,12 @@ class ColumnAlignments:
             ValueError: If the alignment value is not one of 'l', 'c', or 'r', or if the length of the value list does not match the number of indices.
             IndexError: If the index is out of range.
         """
-        VALID_ALIGNMENTS = {"l", "c", "r"}
-
-        def validate_alignment(val: str) -> None:
-            if val not in VALID_ALIGNMENTS:
-                raise ValueError("Alignment must be one of 'l', 'c', or 'r'.")
 
         if isinstance(index, int):
-            if not isinstance(value, str):
-                raise TypeError("Alignment must be a string.")
+            if not isinstance(value, Alignment):
+                raise TypeError("Alignment must be an Alignment.")
             if index < 0 or index >= len(self._alignments):
                 raise IndexError("Index out of range.")
-            validate_alignment(value)
             self._alignments[index] = value
 
         elif isinstance(index, (slice, tuple)):
@@ -52,7 +50,7 @@ class ColumnAlignments:
             elif isinstance(index, slice):
                 indexes = list(range(*index.indices(len(self._alignments))))
 
-            if isinstance(value, str):
+            if isinstance(value, Alignment):
                 value = [value] * len(indexes)
 
             if isinstance(value, Sequence):
@@ -61,20 +59,21 @@ class ColumnAlignments:
                         "Number of alignments must match the number of indices."
                     )
                 for i, val in zip(indexes, value):
-                    if not isinstance(val, str):
-                        raise TypeError("Each alignment must be a string.")
-                    validate_alignment(val)
+                    if not isinstance(val, Alignment):
+                        raise TypeError("Each alignment must be an Alignment.")
                     self._alignments[i] = val
             else:
-                raise TypeError("Value must be a string or a sequence of strings.")
+                raise TypeError(
+                    "Value must be an Alignment or a sequence of Alignments."
+                )
 
         else:
             raise TypeError("Index must be an integer or a slice.")
 
     def __getitem__(self, index: int) -> str:
-        if index < 0 or index >= len(self._alignments):
+        if index >= len(self._alignments):
             raise IndexError("Index out of range")
-        return self._alignments[index]
+        return self._alignments[index].column()
 
     def __len__(self) -> int:
         return len(self._alignments)
@@ -83,4 +82,4 @@ class ColumnAlignments:
         return iter(self._alignments)
 
     def __str__(self) -> str:
-        return "".join(self._alignments)
+        return "".join([a.column() for a in self._alignments])
