@@ -13,11 +13,12 @@ def test_example1():
     table.headers = ("Column 1", "Column 2", "Column 3")
     table.caption = "This is a sample table caption."
     table.label = "tab:sample_table"
-    table.alignments[0, 2] = ["l", "r"]
+    table.column_alignments[0, 2] = ["l", "r"]
+    table.set_table_alignment("left")
 
     expected_output = (
         "\\begin{table}\n"
-        "  \\centering\n"
+        "  \\raggedright\n"
         "  \\begin{tabular}{lcr}\n"
         "    Column 1 & Column 2 & Column 3 \\\\\n"
         "    1 & 2 & 0 \\\\\n"

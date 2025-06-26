@@ -8,11 +8,11 @@ def test_default_alignment():
             [1, 2, 0],
         ]
     )
-    assert table.alignments[0] == "c"
-    assert table.alignments[1] == "c"
-    assert table.alignments[2] == "c"
+    assert table.column_alignments[0] == "c"
+    assert table.column_alignments[1] == "c"
+    assert table.column_alignments[2] == "c"
 
-    assert len(table.alignments) == 3
+    assert len(table.column_alignments) == 3
 
 
 def test_individual_alignment():
@@ -22,11 +22,11 @@ def test_individual_alignment():
             [1, 2, 0],
         ]
     )
-    table.alignments[0] = "l"
+    table.column_alignments[0] = "l"
 
-    assert table.alignments[0] == "l"
-    assert table.alignments[1] == "c"
-    assert table.alignments[2] == "c"
+    assert table.column_alignments[0] == "l"
+    assert table.column_alignments[1] == "c"
+    assert table.column_alignments[2] == "c"
 
 
 def test_slice_alignment():
@@ -36,11 +36,11 @@ def test_slice_alignment():
             [1, 2, 0],
         ]
     )
-    table.alignments[1:3] = ["r", "l"]
+    table.column_alignments[1:3] = ["r", "l"]
 
-    assert table.alignments[0] == "c"
-    assert table.alignments[1] == "r"
-    assert table.alignments[2] == "l"
+    assert table.column_alignments[0] == "c"
+    assert table.column_alignments[1] == "r"
+    assert table.column_alignments[2] == "l"
 
 
 def test_combined_alignment():
@@ -50,11 +50,11 @@ def test_combined_alignment():
             [1, 2, 0],
         ]
     )
-    table.alignments[0, 2] = "l"
+    table.column_alignments[0, 2] = "l"
 
-    assert table.alignments[0] == "l"
-    assert table.alignments[1] == "c"
-    assert table.alignments[2] == "l"
+    assert table.column_alignments[0] == "l"
+    assert table.column_alignments[1] == "c"
+    assert table.column_alignments[2] == "l"
 
 
 def test_full_alignment():
@@ -64,11 +64,11 @@ def test_full_alignment():
             [1, 2, 0],
         ]
     )
-    table.alignments = ["l", "c", "r"]
+    table.column_alignments = ["l", "c", "r"]
 
-    assert table.alignments[0] == "l"
-    assert table.alignments[1] == "c"
-    assert table.alignments[2] == "r"
+    assert table.column_alignments[0] == "l"
+    assert table.column_alignments[1] == "c"
+    assert table.column_alignments[2] == "r"
 
 
 def test_invalid_alignment_type():
@@ -79,7 +79,7 @@ def test_invalid_alignment_type():
         ]
     )
     try:
-        table.alignments[0] = 1  # type: ignore # Invalid type
+        table.column_alignments[0] = 1  # type: ignore # Invalid type
     except TypeError:
         pass
     else:
@@ -94,7 +94,7 @@ def test_invalid_alignment_value():
         ]
     )
     try:
-        table.alignments[0] = "x"  # Invalid alignment
+        table.column_alignments[0] = "x"  # Invalid alignment
     except ValueError:
         pass
     else:
@@ -109,14 +109,14 @@ def test_index_out_of_range():
         ]
     )
     try:
-        _ = table.alignments[3]  # Out of range
+        _ = table.column_alignments[3]  # Out of range
     except IndexError:
         pass
     else:
         assert False, "Expected IndexError not raised."
 
     try:
-        table.alignments[5] = "l"  # Out of range
+        table.column_alignments[5] = "l"  # Out of range
     except IndexError:
         pass
     else:
@@ -130,8 +130,8 @@ def test_support_tuple_value():
             [1, 2, 0],
         ]
     )
-    table.alignments[0, 2] = ("l", "r")
+    table.column_alignments[0, 2] = ("l", "r")
 
-    assert table.alignments[0] == "l"
-    assert table.alignments[1] == "c"
-    assert table.alignments[2] == "r"
+    assert table.column_alignments[0] == "l"
+    assert table.column_alignments[1] == "c"
+    assert table.column_alignments[2] == "r"

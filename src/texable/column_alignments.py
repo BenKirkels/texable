@@ -1,7 +1,7 @@
 from typing import Union, Sequence
 
 
-class Alignments:
+class ColumnAlignments:
     def __init__(self, num_columns: int) -> None:
         if not isinstance(num_columns, int) or num_columns <= 0:
             raise ValueError("Number of columns must be a positive integer.")

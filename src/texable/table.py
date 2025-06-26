@@ -1,7 +1,7 @@
 from typing import Optional, Any, Sequence, Union
 import logging
 
-from texable.alignments import Alignments
+from texable.column_alignments import ColumnAlignments
 from texable.headers import Headers
 from texable.line_borders import LineBorders
 from texable.latex_builders import (
@@ -33,7 +33,7 @@ class Table:
         ), "All rows must have the same number of columns."
 
         self._headers = Headers(self._num_columns)
-        self._alignments = Alignments(self._num_columns)
+        self._column_alignments = ColumnAlignments(self._num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
         self._vertical_borders = LineBorders(self._num_columns + 1, is_horizontal=False)
@@ -85,12 +85,12 @@ class Table:
         return self._num_columns
 
     @property
-    def alignments(self) -> Alignments:
-        return self._alignments
+    def column_alignments(self) -> ColumnAlignments:
+        return self._column_alignments
 
-    @alignments.setter
-    def alignments(self, alignments: Union[str, Sequence[str]]) -> None:
-        self._alignments[:] = alignments
+    @column_alignments.setter
+    def column_alignments(self, alignments: Union[str, Sequence[str]]) -> None:
+        self._column_alignments[:] = alignments
 
     @property
     def vertical_borders(self) -> LineBorders:
@@ -145,6 +145,6 @@ class Table:
         result = ""
         for i in range(self._num_columns):
             result += self._vertical_borders[i]
-            result += self._alignments[i]
+            result += self._column_alignments[i]
         result += self._vertical_borders[self._num_columns]
         return result
