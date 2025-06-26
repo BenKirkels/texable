@@ -140,6 +140,33 @@ class Table:
         """Return the LaTeX representation of the table."""
         return str(self)
 
+    @classmethod
+    def from_file(cls, file_path: str) -> "Table":
+        """Create a Table object from a file."""
+        import os
+
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} does not exist.")
+
+        if file_path.endswith(".csv"):
+            import csv
+
+            with open(file_path, "r") as file:
+                reader = csv.reader(file)
+                data = list(reader)
+            return cls(data)
+        elif file_path.endswith(".tsv"):
+            import csv
+
+            with open(file_path, "r") as file:
+                reader = csv.reader(file, delimiter="\t")
+                data = list(reader)
+            return cls(data)
+        else:
+            raise ValueError(
+                "Unsupported file format. Only .csv and .tsv files are supported."
+            )
+
     def write_to_file(self, file_path: str) -> None:
         with open(file_path, "w") as file:
             file.write(str(self))
