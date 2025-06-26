@@ -136,6 +136,10 @@ class Table:
             indent=self._indent,
         )
 
+    def to_latex(self) -> str:
+        """Return the LaTeX representation of the table."""
+        return str(self)
+
     def write_to_file(self, file_path: str) -> None:
         with open(file_path, "w") as file:
             file.write(str(self))
