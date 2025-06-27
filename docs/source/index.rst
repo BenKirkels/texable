@@ -34,3 +34,4 @@ Typical Use Cases
    :caption: Contents:
 
    usage
+   api
