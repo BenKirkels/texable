@@ -16,6 +16,16 @@ class Row(Sequence[Cell]):
         """
         self._cells = cells
 
+    def add_formatters(self, *formatters) -> None:
+        """
+        Adds formatters to all cells in the row.
+
+        Args:
+            *formatters: Formatters to apply to each cell in the row.
+        """
+        for cell in self._cells:
+            cell.add_formatters(*formatters)
+
     @overload
     def __getitem__(self, index: int) -> Cell: ...
 
@@ -77,4 +87,4 @@ class Row(Sequence[Cell]):
         Returns:
             str: A LaTeX formatted string representing the row.
         """
-        return " & ".join(str(cell) for cell in self._cells) + r" \\" + "\n"
+        return " & ".join(cell.to_latex() for cell in self._cells) + r" \\" + "\n"

@@ -366,7 +366,7 @@ class Table:
             file_path (str): Destination file path.
         """
         with open(file_path, "w") as file:
-            file.write(str(self))
+            file.write(self.to_latex())
 
     def __repr__(self) -> str:
         """
