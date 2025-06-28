@@ -17,4 +17,6 @@ __pycache__/
 
 # Miscellaneous
 *.tex
+main.py
+test_data.csv
 
