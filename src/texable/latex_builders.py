@@ -1,11 +1,13 @@
 from typing import Any, Sequence, Optional
 
+from texable.grid import Grid
 from texable.headers import Headers
 from texable.line_borders import LineBorders
 from texable.column_alignments import ColumnAlignments
+from texable.row import Row
 
 
-def make_row(row: Sequence[Any]) -> str:
+def make_row(row: Sequence) -> str:
     return " & ".join(str(cell) for cell in row) + r" \\" + "\n"
 
 
@@ -18,13 +20,13 @@ def make_label(label: str) -> str:
 
 
 def make_tabular_content(
-    headers: Headers, rows: Sequence[Sequence[str]], horizontal_borders: LineBorders
+    headers: Headers, data: Grid, horizontal_borders: LineBorders
 ) -> str:
     latex_rows = []
     if headers.are_set:
         latex_rows.append(make_row(headers.headers))
 
-    for row in rows:
+    for row in data:
         latex_rows.append(make_row(row))
 
     with_borders = ""

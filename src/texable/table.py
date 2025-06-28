@@ -2,6 +2,7 @@ from typing import Optional, Any, Sequence, Union
 import logging
 
 from texable.column_alignments import ColumnAlignments
+from texable.grid import Grid
 from texable.headers import Headers
 from texable.line_borders import LineBorders
 from texable.latex_builders import (
@@ -71,7 +72,7 @@ class Table:
         ):
             raise TypeError("Data must be a sequence of sequences (rows).")
 
-        self._data = data
+        self._data = Grid(data)
         self._num_columns = len(data[0]) if data else 0
         self._num_rows = len(data)
         if not all(len(row) == self._num_columns for row in data):
