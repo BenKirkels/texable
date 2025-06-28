@@ -72,7 +72,7 @@ class Table:
         ):
             raise TypeError("Data must be a sequence of sequences (rows).")
 
-        self._data = Grid(data)
+        self._grid = Grid(data)
         self._num_columns = len(data[0]) if data else 0
         self._num_rows = len(data)
         if not all(len(row) == self._num_columns for row in data):
@@ -88,6 +88,16 @@ class Table:
         self._table_alignment: Alignment = Alignment.CENTER
         self._caption: Optional[str] = None
         self._label: Optional[str] = None
+
+    @property
+    def grid(self) -> Grid:
+        """
+        Get the data of the table.
+
+        Returns:
+            Grid: The table data as a Grid object.
+        """
+        return self._grid
 
     @property
     def headers(self) -> Headers:
@@ -252,7 +262,7 @@ class Table:
         tabular_alignment = self._table_alignment.table() + "\n"
 
         tabular_content = make_tabular_content(
-            self._headers, self._data, self._horizontal_borders
+            self._headers, self._grid, self._horizontal_borders
         )
         tabular_block = make_block(
             name="tabular",

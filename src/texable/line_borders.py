@@ -68,7 +68,7 @@ class LineBorders(ABC):
 class HorizontalBorders(LineBorders):
     """
     Represents horizontal borders between rows in a table.
-    This class is a specialized version of LineBorders for horizontal borders.
+    This class is a specialized version of `LineBorders` for horizontal borders.
     """
 
     def _make_border(self, type: Literal["single", "double"]) -> str:
@@ -79,7 +79,7 @@ class HorizontalBorders(LineBorders):
 class VerticalBorders(LineBorders):
     """
     Represents vertical borders between columns in a table.
-    This class is a specialized version of LineBorders for vertical borders.
+    This class is a specialized version of `LineBorders` for vertical borders.
     """
 
     def _make_border(self, type: Literal["single", "double"]) -> str:

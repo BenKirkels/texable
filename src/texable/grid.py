@@ -23,6 +23,15 @@ class Grid[T]:
 
         self._grid = [Row([Cell(value) for value in row]) for row in data]
 
+    @property
+    def rows(self) -> list[Row]:
+        """
+        Returns the rows of the grid.
+        Returns:
+            Sequence[Row]: A sequence of Row objects representing the grid rows.
+        """
+        return self._grid
+
     def __getitem__(self, index: int) -> Row:
         """
         Gets the row at the specified index.
