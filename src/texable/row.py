@@ -60,3 +60,12 @@ class Row(Sequence[Cell]):
             str: A string representation of the row.
         """
         return f"Row({self._cells})"
+
+    def to_latex(self) -> str:
+        """
+        Converts the row to a LaTeX formatted string.
+
+        Returns:
+            str: A LaTeX formatted string representing the row.
+        """
+        return " & ".join(str(cell) for cell in self._cells) + r" \\" + "\n"

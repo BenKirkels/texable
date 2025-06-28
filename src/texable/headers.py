@@ -81,3 +81,7 @@ class Headers:
 
     def __repr__(self):
         return repr(self._headers)
+
+    def to_latex(self) -> str:
+        """Convert headers to LaTeX format."""
+        return " & ".join(self._headers) + r" \\" + "\n"

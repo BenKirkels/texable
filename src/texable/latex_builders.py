@@ -1,14 +1,9 @@
-from typing import Any, Sequence, Optional
+from typing import Optional
 
 from texable.grid import Grid
 from texable.headers import Headers
 from texable.line_borders import LineBorders
 from texable.column_alignments import ColumnAlignments
-from texable.row import Row
-
-
-def make_row(row: Sequence) -> str:
-    return " & ".join(str(cell) for cell in row) + r" \\" + "\n"
 
 
 def make_caption(caption: str) -> str:
@@ -24,10 +19,10 @@ def make_tabular_content(
 ) -> str:
     latex_rows = []
     if headers.are_set:
-        latex_rows.append(make_row(headers.headers))
+        latex_rows.append(headers.to_latex())
 
     for row in data:
-        latex_rows.append(make_row(row))
+        latex_rows.append(row.to_latex())
 
     with_borders = ""
     for i in range(len(latex_rows)):
