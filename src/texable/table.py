@@ -18,9 +18,54 @@ logger = logging.getLogger(__name__)
 
 
 class Table:
-    def __init__(self, data: Sequence[Sequence[Any]]) -> None:
-        """Initialize a Table object."""
+    """
+    Represents a table for data manipulation and LaTeX generation.
 
+    The `Table` class allows creating, modifying, and exporting tabular data
+    with support for headers, column alignments, borders, captions, and labels.
+    It can generate LaTeX code to include the table in LaTeX documents.
+
+    Examples:
+        Creating a table:
+
+        >>> data = [
+        ...     ["Name", "Age", "City"],
+        ...     ["Alice", 30, "New York"],
+        ...     ["Bob", 25, "Los Angeles"],
+        ... ]
+        >>> table = Table(data)
+
+        Setting headers:
+
+        >>> table.headers = ["Name", "Age", "City"]
+
+        Setting column alignments:
+
+        >>> from texable import Alignment
+        >>> table.column_alignments = [Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT]
+
+        Adding caption and label:
+
+        >>> table.caption = "User Data"
+        >>> table.label = "tab:user_data"
+
+        Exporting LaTeX code:
+
+        >>> latex_code = table.to_latex()
+    """
+
+    def __init__(self, data: Sequence[Sequence[Any]]) -> None:
+        """
+        Initialize a Table object.
+
+        Args:
+            data (Sequence[Sequence[Any]]): Data as a sequence of rows,
+                each row a sequence of values.
+
+        Raises:
+            TypeError: If `data` is not a sequence of sequences.
+            ValueError: If rows have inconsistent column counts.
+        """
         if not isinstance(data, Sequence) or not all(
             isinstance(row, Sequence) for row in data
         ):
@@ -29,9 +74,8 @@ class Table:
         self._data = data
         self._num_columns = len(data[0]) if data else 0
         self._num_rows = len(data)
-        assert all(
-            len(row) == self._num_columns for row in data
-        ), "All rows must have the same number of columns."
+        if not all(len(row) == self._num_columns for row in data):
+            raise ValueError("All rows must have the same number of columns.")
 
         self._headers = Headers(self._num_columns)
         self._column_alignments = ColumnAlignments(self._num_columns)
@@ -46,6 +90,18 @@ class Table:
 
     @property
     def headers(self) -> Headers:
+        """
+        Get or set the headers of the table.
+
+        The headers must be a sequence of strings matching the number of columns.
+
+        Returns:
+            Headers: The table headers.
+
+        Raises:
+            TypeError: If assigned headers are not a sequence of strings.
+            ValueError: If header count doesn't match number of columns.
+        """
         return self._headers
 
     @headers.setter
@@ -61,6 +117,14 @@ class Table:
 
     @property
     def caption(self) -> Optional[str]:
+        """
+        Get or set the caption of the table.
+
+        Overwriting an existing caption will log a warning.
+
+        Returns:
+            Optional[str]: Caption string or None if unset.
+        """
         return self._caption
 
     @caption.setter
@@ -71,6 +135,14 @@ class Table:
 
     @property
     def label(self) -> Optional[str]:
+        """
+        Get or set the label of the table.
+
+        Overwriting an existing label will log a warning.
+
+        Returns:
+            Optional[str]: Label string or None if unset.
+        """
         return self._label
 
     @label.setter
@@ -81,6 +153,14 @@ class Table:
 
     @property
     def indent(self) -> str:
+        """
+        Get or set the indentation string used for LaTeX blocks.
+
+        The default is two spaces.
+
+        Returns:
+            str: Indentation string.
+        """
         return self._indent
 
     @indent.setter
@@ -89,14 +169,54 @@ class Table:
 
     @property
     def num_columns(self) -> int:
+        """
+        Get the number of columns in the table.
+
+        Returns:
+            int: Number of columns.
+        """
         return self._num_columns
 
     @property
     def column_alignments(self) -> ColumnAlignments:
+        """Get or set the alignments of the columns in the table.
+
+        You can assign alignments using a single `Alignment` value or a sequence of `Alignment` values.
+        - If a single `Alignment` is provided, it will be applied to all selected columns.
+        - If a sequence is provided, it must match the number of columns being assigned.
+
+        The default alignment for all columns is `Alignment.CENTER`.
+
+        Returns:
+            ColumnAlignments: Current column alignments.
+
+        Raises:
+            TypeError: If the input is not an `Alignment` or a sequence of `Alignment`.
+            ValueError: If the number of alignments does not match the number of columns targeted.
+            IndexError: If the specified index is out of range.
+
+        Examples:
+            Set all columns to left alignment:
+            >>> table.column_alignments = Alignment.LEFT
+
+            Set specific alignments for each column (assuming 3 columns):
+            >>> table.column_alignments = [Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT]
+
+            Set individual columns:
+            >>> table.column_alignments[0] = Alignment.LEFT
+
+            Set a slice of columns:
+            >>> table.column_alignments[1:3] = [Alignment.CENTER, Alignment.RIGHT]
+
+            Set multiple columns using a tuple of indices:
+            >>> table.column_alignments[0, 1] = Alignment.LEFT
+        """
         return self._column_alignments
 
     @column_alignments.setter
-    def column_alignments(self, alignments: Union[Alignment, Sequence[Alignment]]) -> None:
+    def column_alignments(
+        self, alignments: Union[Alignment, Sequence[Alignment]]
+    ) -> None:
         self._column_alignments[:] = alignments
 
     @property
@@ -109,15 +229,25 @@ class Table:
 
     @property
     def table_alignment(self) -> Alignment:
-        """Get the alignment of the entire table."""
+        """Get or set the alignment of the table.
+
+        The table alignment determines how the table is positioned within the LaTeX document.
+
+        The default alignment is `Alignment.CENTER`.
+        """
         return self._table_alignment
 
     @table_alignment.setter
     def table_alignment(self, alignment: Alignment) -> None:
-        """Set the alignment of the entire table."""
         self._table_alignment = alignment
 
     def __str__(self) -> str:
+        """
+        Return the LaTeX string representation of the table.
+
+        Returns:
+            str: LaTeX code for the table.
+        """
         tabular_alignment = self._table_alignment.table() + "\n"
 
         tabular_content = make_tabular_content(
@@ -142,39 +272,69 @@ class Table:
         )
 
     def to_latex(self) -> str:
-        """Return the LaTeX representation of the table."""
+        """
+        Return the LaTeX string representation of the table.
+
+        Returns:
+            str: LaTeX code for the table.
+        """
         return str(self)
 
     @classmethod
     def from_file(cls, file_path: str) -> "Table":
-        """Create a Table object from a file."""
+        """
+        Create a Table object from a CSV or TSV file.
+
+        Args:
+            file_path (str): Path to a CSV (.csv) or TSV (.tsv) file.
+
+        Returns:
+            Table: A new Table instance with data loaded from the file.
+
+        Raises:
+            FileNotFoundError: If the file does not exist.
+            ValueError: If the file format is unsupported.
+            ValueError: If rows have inconsistent column counts.
+        """
         import os
 
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"The file {file_path} does not exist.")
 
-        if file_path.endswith(".csv"):
+        match file_path:
+            case file_path if file_path.endswith(".csv"):
+                delimiter = ","
+            case file_path if file_path.endswith(".tsv"):
+                delimiter = "\t"
+            case _:
+                raise ValueError(
+                    "Unsupported file format. Only .csv and .tsv files are supported."
+                )
+
+        # Read the file and create a Table instance
+        with open(file_path, "r") as file:
             import csv
 
-            with open(file_path, "r") as file:
-                reader = csv.reader(file)
-                data = list(reader)
-            return cls(data)
-        elif file_path.endswith(".tsv"):
-            import csv
+            reader = csv.reader(file, delimiter=delimiter)
+            data = list(reader)
 
-            with open(file_path, "r") as file:
-                reader = csv.reader(file, delimiter="\t")
-                data = list(reader)
-            return cls(data)
-        else:
-            raise ValueError(
-                "Unsupported file format. Only .csv and .tsv files are supported."
-            )
+        return cls(data)
 
     def write_to_file(self, file_path: str) -> None:
+        """
+        Write the LaTeX representation of the table to a file.
+
+        Args:
+            file_path (str): Destination file path.
+        """
         with open(file_path, "w") as file:
             file.write(str(self))
 
     def __repr__(self) -> str:
-        return f"Table(header={self._headers}, rows={self._data})"
+        """
+        Return a string representation for debugging.
+
+        Returns:
+            str: A string representation of the Table object.
+        """
+        return f"Table(num_columns={self._num_columns}, num_rows={self._num_rows}, headers={self._headers})"

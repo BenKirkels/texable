@@ -4,6 +4,8 @@ from texable.custom_types import Alignment
 
 
 class ColumnAlignments:
+    """A class to manage column alignments in a table."""
+
     def __init__(self, num_columns: int) -> None:
         if not isinstance(num_columns, int) or num_columns <= 0:
             raise ValueError("Number of columns must be a positive integer.")
