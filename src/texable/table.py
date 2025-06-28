@@ -73,17 +73,16 @@ class Table:
             raise TypeError("Data must be a sequence of sequences (rows).")
 
         self._grid = Grid(data)
-        self._num_columns = len(data[0]) if data else 0
-        self._num_rows = len(data)
-        if not all(len(row) == self._num_columns for row in data):
-            raise ValueError("All rows must have the same number of columns.")
 
-        self._headers = Headers(self._num_columns)
-        self._column_alignments = ColumnAlignments(self._num_columns)
+        num_rows = self._grid.num_rows
+        num_columns = self._grid.num_cols
+
+        self._headers = Headers(num_columns)
+        self._column_alignments = ColumnAlignments(num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
-        self._vertical_borders = VerticalBorders(self._num_columns + 1)
-        self._horizontal_borders = HorizontalBorders(self._num_rows + 1)
+        self._vertical_borders = VerticalBorders(num_columns + 1)
+        self._horizontal_borders = HorizontalBorders(num_rows + 1)
 
         self._table_alignment: Alignment = Alignment.CENTER
         self._caption: Optional[str] = None
@@ -119,9 +118,9 @@ class Table:
     def headers(self, headers: Sequence[str]) -> None:
         if not isinstance(headers, Sequence):
             raise TypeError("Headers must be a sequence of strings.")
-        if len(headers) != self._num_columns:
+        if len(headers) != self.num_columns:
             raise ValueError(
-                f"Number of headers ({len(headers)}) must match number of columns ({self._num_columns})."
+                f"Number of headers ({len(headers)}) must match number of columns ({self.num_columns})."
             )
 
         self._headers[:] = headers
@@ -186,7 +185,17 @@ class Table:
         Returns:
             int: Number of columns.
         """
-        return self._num_columns
+        return self.grid.num_cols
+
+    @property
+    def num_rows(self) -> int:
+        """
+        Get the number of rows in the table.
+
+        Returns:
+            int: Number of rows.
+        """
+        return self.grid.num_rows
 
     @property
     def column_alignments(self) -> ColumnAlignments:
@@ -253,6 +262,33 @@ class Table:
         self._table_alignment = alignment
 
     def __str__(self) -> str:
+        # First, determine the number of columns
+        num_cols = self.grid.num_cols
+
+        # Flatten grid + headers into string values and find max width for each column
+        columns = [[] for _ in range(num_cols)]
+        if self._headers.are_set:
+            for i, header in enumerate(self._headers):
+                columns[i].append(str(header))
+        for row in self._grid:
+            for i, cell in enumerate(row):
+                columns[i].append(str(cell))
+        col_widths = [max(len(cell) for cell in col) for col in columns]
+
+        def format_row(row):
+            return " | ".join(
+                f"{str(cell):<{col_widths[i]}}" for i, cell in enumerate(row)
+            )
+
+        result = ""
+        if self._headers.are_set:
+            result += format_row(self._headers) + "\n"
+        for row in self._grid:
+            result += format_row(row) + "\n"
+
+        return result.strip()
+
+    def to_latex(self) -> str:
         """
         Return the LaTeX string representation of the table.
 
@@ -281,15 +317,6 @@ class Table:
             content=f"{tabular_alignment}{tabular_block}{caption}{label}",
             indent=self._indent,
         )
-
-    def to_latex(self) -> str:
-        """
-        Return the LaTeX string representation of the table.
-
-        Returns:
-            str: LaTeX code for the table.
-        """
-        return str(self)
 
     @classmethod
     def from_file(cls, file_path: str) -> "Table":
@@ -348,4 +375,4 @@ class Table:
         Returns:
             str: A string representation of the Table object.
         """
-        return f"Table(num_columns={self._num_columns}, num_rows={self._num_rows}, headers={self._headers})"
+        return f"Table(num_columns={self.num_columns}, num_rows={self.num_rows}, headers={self.headers})"

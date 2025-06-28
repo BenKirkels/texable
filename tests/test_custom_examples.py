@@ -31,4 +31,4 @@ def test_example1():
         "\\end{table}\n"
     )
 
-    assert str(table) == expected_output
+    assert table.to_latex() == expected_output

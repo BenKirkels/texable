@@ -21,7 +21,7 @@ def test_example1():
         "  \\end{tabular}\n"
         "\\end{table}\n"
     )
-    assert str(table) == expected_output
+    assert table.to_latex() == expected_output
 
 
 def test_example2():
@@ -48,7 +48,7 @@ def test_example2():
         "  \\end{tabular}\n"
         "\\end{table}\n"
     )
-    assert str(table) == expected_output
+    assert table.to_latex() == expected_output
 
 
 def test_example3():
@@ -87,4 +87,4 @@ def test_example3():
         "  \\end{tabular}\n"
         "\\end{table}\n"
     )
-    assert str(table) == expected_output
+    assert table.to_latex() == expected_output

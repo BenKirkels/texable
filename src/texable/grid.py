@@ -64,6 +64,24 @@ class Grid[T]:
         """
         return self._num_cols
 
+    def __str__(self) -> str:
+        columns = [[] for _ in range(self.num_cols)]
+        for row in self._grid:
+            for i, cell in enumerate(row):
+                columns[i].append(str(cell))
+        col_widths = [max(len(cell) for cell in col) for col in columns]
+
+        def format_row(row):
+            return " | ".join(
+                f"{str(cell):<{col_widths[i]}}" for i, cell in enumerate(row)
+            )
+
+        result = ""
+        for row in self._grid:
+            result += format_row(row) + "\n"
+
+        return result.strip()
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the grid.

@@ -52,6 +52,15 @@ class Row(Sequence[Cell]):
         """
         return iter(self._cells)
 
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the row.
+
+        Returns:
+            str: A string representation of the row.
+        """
+        return " | ".join(str(cell) for cell in self._cells)
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the row.

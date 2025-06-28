@@ -79,6 +79,10 @@ class Headers:
     def __iter__(self):
         return iter(self._headers)
 
+    def __str__(self) -> str:
+        """Return a string representation of the headers."""
+        return " | ".join(self._headers)
+
     def __repr__(self):
         return repr(self._headers)
 
