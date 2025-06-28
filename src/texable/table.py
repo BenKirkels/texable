@@ -4,7 +4,7 @@ import logging
 from texable.column_alignments import ColumnAlignments
 from texable.grid import Grid
 from texable.headers import Headers
-from texable.line_borders import LineBorders
+from texable.line_borders import LineBorders, VerticalBorders, HorizontalBorders
 from texable.latex_builders import (
     make_caption,
     make_label,
@@ -82,8 +82,8 @@ class Table:
         self._column_alignments = ColumnAlignments(self._num_columns)
         self._indent: str = "  "  # Default indentation for LaTeX blocks
 
-        self._vertical_borders = LineBorders(self._num_columns + 1, is_horizontal=False)
-        self._horizontal_borders = LineBorders(self._num_rows + 1, is_horizontal=True)
+        self._vertical_borders = VerticalBorders(self._num_columns + 1)
+        self._horizontal_borders = HorizontalBorders(self._num_rows + 1)
 
         self._table_alignment: Alignment = Alignment.CENTER
         self._caption: Optional[str] = None

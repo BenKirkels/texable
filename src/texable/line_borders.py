@@ -1,7 +1,8 @@
 from typing import Literal
+from abc import ABC, abstractmethod
 
 
-class LineBorders:
+class LineBorders(ABC):
     """
     Represents borders between adjacent cells along one axis (horizontal or vertical).
     This class does not represent all borders of a grid, only those between elements
@@ -11,10 +12,9 @@ class LineBorders:
     borders (between and around the columns).
     """
 
-    def __init__(self, num_borders: int, is_horizontal: bool) -> None:
+    def __init__(self, num_borders: int) -> None:
         self._num_borders = num_borders
         self._borders = [""] * num_borders
-        self._is_horizontal = is_horizontal
 
     @property
     def borders(self) -> list[str]:
@@ -43,10 +43,12 @@ class LineBorders:
         if index >= self._num_borders:
             raise IndexError("Index out of range.")
 
-        if self._is_horizontal:
-            self._borders[index] = "\\hline" if type == "single" else "\\hline\\hline"
-        else:
-            self._borders[index] = "|" if type == "single" else "||"
+        self._borders[index] = self._make_border(type)
+
+    @abstractmethod
+    def _make_border(self, type: Literal["single", "double"]) -> str:
+        """Abstract method to define how to create a border."""
+        pass
 
     def __getitem__(self, index: int) -> str:
         """Get the status of a specific border."""
@@ -61,3 +63,25 @@ class LineBorders:
     def __len__(self) -> int:
         """Get the number of borders."""
         return self._num_borders
+
+
+class HorizontalBorders(LineBorders):
+    """
+    Represents horizontal borders between rows in a table.
+    This class is a specialized version of LineBorders for horizontal borders.
+    """
+
+    def _make_border(self, type: Literal["single", "double"]) -> str:
+        """Define how to create a horizontal border."""
+        return "\\hline" if type == "single" else "\\hline\\hline"
+
+
+class VerticalBorders(LineBorders):
+    """
+    Represents vertical borders between columns in a table.
+    This class is a specialized version of LineBorders for vertical borders.
+    """
+
+    def _make_border(self, type: Literal["single", "double"]) -> str:
+        """Define how to create a vertical border."""
+        return "|" if type == "single" else "||"
