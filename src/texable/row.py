@@ -1,4 +1,4 @@
-from typing import Sequence, overload
+from typing import Callable, Optional, Sequence, overload
 from texable.cell import Cell
 
 
@@ -16,7 +16,11 @@ class Row(Sequence[Cell]):
         """
         self._cells = cells
 
-    def add_formatters(self, *formatters) -> None:
+    def add_formatters(
+        self,
+        *formatters: Callable[[str], str],
+        selector: Optional[Callable[[Cell], bool]] = None,
+    ) -> None:
         """
         Adds formatters to all cells in the row.
 
@@ -24,7 +28,8 @@ class Row(Sequence[Cell]):
             *formatters: Formatters to apply to each cell in the row.
         """
         for cell in self._cells:
-            cell.add_formatters(*formatters)
+            if selector is None or selector(cell):
+                cell.add_formatters(*formatters)
 
     @overload
     def __getitem__(self, index: int) -> Cell: ...
