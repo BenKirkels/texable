@@ -13,6 +13,8 @@ from texable.latex_builders import (
     make_column_arg,
 )
 from texable.custom_types import Alignment
+from texable.packages import required_packages
+
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -130,8 +132,6 @@ class Table:
         """
         Get or set the caption of the table.
 
-        Overwriting an existing caption will log a warning.
-
         Returns:
             Optional[str]: Caption string or None if unset.
         """
@@ -139,16 +139,12 @@ class Table:
 
     @caption.setter
     def caption(self, caption: str) -> None:
-        if self.caption is not None:
-            logger.warning("Warning: Overwriting existing caption.")
         self._caption = str(caption)
 
     @property
     def label(self) -> Optional[str]:
         """
         Get or set the label of the table.
-
-        Overwriting an existing label will log a warning.
 
         Returns:
             Optional[str]: Label string or None if unset.
@@ -157,8 +153,6 @@ class Table:
 
     @label.setter
     def label(self, label: str) -> None:
-        if self.label is not None:
-            logger.warning("Warning: Overwriting existing label.")
         self._label = str(label)
 
     @property
@@ -312,11 +306,18 @@ class Table:
         caption = make_caption(self._caption) if self._caption else ""
         label = make_label(self._label) if self._label else ""
 
-        return make_block(
+        final = ""
+        if required_packages:
+            final += "\n".join(str(pck) for pck in required_packages)
+            final += "\n"
+            final += "%" * 20 + "\n"
+
+        final += make_block(
             name="table",
             content=f"{tabular_alignment}{tabular_block}{caption}{label}",
             indent=self._indent,
         )
+        return final
 
     @classmethod
     def from_file(cls, file_path: str) -> "Table":

@@ -1,4 +1,5 @@
 from typing import Callable
+from texable.packages import require_package
 
 
 def bold(text: str) -> str:
@@ -25,7 +26,7 @@ def italic(text: str) -> str:
     return f"\\textit{{{text}}}"
 
 
-def color(color_name: str) -> Callable[[str], str]:
+def text_color(color_name: str) -> Callable[[str], str]:
     """
     Creates a formatter that applies the specified color to the text.
 
@@ -37,6 +38,25 @@ def color(color_name: str) -> Callable[[str], str]:
     """
 
     def formatter(text: str) -> str:
+        require_package("xcolor")
         return f"\\textcolor{{{color_name}}}{{{text}}}"
+
+    return formatter
+
+
+def cell_color(color_name: str) -> Callable[[str], str]:
+    """
+    Creates a formatter that applies the specified color to the cell content.
+
+    Args:
+        color_name (str): The name of the color to apply.
+
+    Returns:
+        Callable[[str], str]: A function that formats cell content in the specified color.
+    """
+
+    def formatter(text: str) -> str:
+        require_package("xcolor", ["table"])
+        return f"\\cellcolor{{{color_name}}}{{{text}}}"
 
     return formatter
