@@ -14,6 +14,7 @@ from texable.latex_builders import (
 )
 from texable.custom_types import Alignment
 from texable.packages import required_packages
+from texable.row import Row
 
 
 # Configure logging
@@ -99,6 +100,16 @@ class Table:
             Grid: The table data as a Grid object.
         """
         return self._grid
+
+    @property
+    def rows(self) -> list[Row]:
+        """
+        Get the rows of the table.
+
+        Returns:
+            list[Row]: The rows of the table.
+        """
+        return self._grid.rows
 
     @property
     def headers(self) -> Headers:
