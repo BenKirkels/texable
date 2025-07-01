@@ -4,7 +4,6 @@ from typing import Sequence, Union
 class Headers:
     def __init__(self, num_headers: int) -> None:
         self._headers: list[str] = [""] * num_headers  # Initialize with empty strings
-        self._headers_set = False
 
     @property
     def headers(self) -> list[str]:
@@ -14,7 +13,7 @@ class Headers:
     @property
     def are_set(self) -> bool:
         """Check if headers have been set."""
-        return self._headers_set
+        return any(h != "" for h in self._headers)
 
     def __getitem__(self, index: int) -> str:
         return self._headers[index]
@@ -31,7 +30,6 @@ class Headers:
             ValueError: If the length of the value sequence does not match the number of indices.
             IndexError: If the index is out of range.
         """
-        self._headers_set = True
 
         if isinstance(index, int):
             if not isinstance(value, str):
