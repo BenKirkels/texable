@@ -1,16 +1,14 @@
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable
 from functools import total_ordering
-
-T = TypeVar("T")
 
 
 @total_ordering
-class Cell(Generic[T]):
+class Cell:
     """
     Represents a cell in a table with its content and formatting options.
     """
 
-    def __init__(self, value: T) -> None:
+    def __init__(self, value: Any) -> None:
         """
         Initializes a Cell with the given content.
 
@@ -21,7 +19,7 @@ class Cell(Generic[T]):
         self._formatters: list[Callable[[str], str]] = []
 
     @property
-    def value(self) -> T:
+    def value(self) -> Any:
         """
         Returns the content of the cell.
 
@@ -31,7 +29,7 @@ class Cell(Generic[T]):
         return self._value
 
     @value.setter
-    def value(self, value: T) -> None:
+    def value(self, value: Any) -> None:
         """
         Sets the content of the cell.
 
