@@ -1,15 +1,15 @@
-from typing import Sequence
+from typing import Any, Iterator, Sequence
 
 from texable.cell import Cell
 from texable.row import Row
 
 
-class Grid[T]:
+class Grid:
     """
     A class to represent a grid of cells.
     """
 
-    def __init__(self, data: Sequence[Sequence[T]]) -> None:
+    def __init__(self, data: Sequence[Sequence[Any]]) -> None:
         """
         Initializes the Grid with the provided data.
 
@@ -32,18 +32,6 @@ class Grid[T]:
         """
         return self._grid
 
-    def __getitem__(self, index: int) -> Row:
-        """
-        Gets the row at the specified index.
-
-        Args:
-            index (int): The index of the row to retrieve.
-
-        Returns:
-            List[Cell[T]]: The row at the specified index.
-        """
-        return self._grid[index]
-
     @property
     def num_rows(self) -> int:
         """
@@ -63,6 +51,18 @@ class Grid[T]:
             int: The number of columns.
         """
         return self._num_cols
+
+    def __getitem__(self, index: int) -> Row:
+        """
+        Gets the row at the specified index.
+
+        Args:
+            index (int): The index of the row to retrieve.
+
+        Returns:
+            Row: The row at the specified index.
+        """
+        return self._grid[index]
 
     def __str__(self) -> str:
         columns = [[] for _ in range(self.num_cols)]
@@ -91,12 +91,12 @@ class Grid[T]:
         """
         return "\n".join([" | ".join(repr(cell) for cell in row) for row in self._grid])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Row]:
         """
         Returns an iterator over the rows of the grid.
 
         Returns:
-            Iterator[List[Cell[T]]]: An iterator over the rows.
+            Iterator[Row]: An iterator over the rows.
         """
         return iter(self._grid)
 
